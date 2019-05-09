@@ -11,7 +11,6 @@ import { HeroService } from '../service/hero.service';
 export class HeroesComponent implements OnInit {
 
     heroes: Hero[];
-    selectedHero: Hero;
 
     constructor(private heroService: HeroService) { }
 
@@ -23,8 +22,23 @@ export class HeroesComponent implements OnInit {
                         .subscribe(heroesFromService => this.heroes = heroesFromService);
     }
 
-    /*getHeroes(): void  { this.heroes = this.heroService.getHeroesFromService();  }*/
+    /**
+     * When the given name is non-blank, the handler creates a Hero-like object from the name (it's only missing the id) and passes it to the services addHero() method.
+     * @param name 
+     */
+    add(name: string): void {
+        name = name.trim();
 
-    onSelect(hero: Hero): void  { this.selectedHero = hero; }
+        if (!name) { return; }
+        this.heroService.addHeroFromService({ name } as Hero)
+                        .subscribe(hero => {
+                            this.heroes.push(hero);
+                        });
+    }
+
+    delete(heroToDelete: Hero): void {
+        this.heroes = this.heroes.filter(h => h !== heroToDelete);
+        this.heroService.deleteHeroFromService(heroToDelete).subscribe();
+    }
 
 }
